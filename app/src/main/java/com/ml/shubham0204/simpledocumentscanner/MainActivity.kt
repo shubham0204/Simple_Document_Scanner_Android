@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import com.ml.shubham0204.simpledocumentscanner.databinding.ActivityMainBinding
 
+// This app uses the API to crop documents
 class MainActivity : AppCompatActivity() {
 
     private lateinit var activityMainBinding : ActivityMainBinding
