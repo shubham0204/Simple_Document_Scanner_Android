@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "Simple Document Scanner"
 include ':app'
 
+include ':opencv_4_5_5'
