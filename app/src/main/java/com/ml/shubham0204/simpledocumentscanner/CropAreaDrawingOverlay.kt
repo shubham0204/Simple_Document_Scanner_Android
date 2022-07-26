@@ -1,19 +1,18 @@
 package com.ml.shubham0204.simpledocumentscanner
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
+import com.ml.shubham0204.simpledocumentscanner.api.BoundingBox
 
 class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : View(context , attributeSet ) {
 
-    private var currentQuad : Quadrilateral = Quadrilateral()
+    private lateinit var currentQuad : BoundingBox
+    private lateinit var currentImage : Bitmap
     private var currentQuadPath : Path = Path()
     private val quadPaint = Paint().apply {
         color = Color.BLACK
@@ -25,6 +24,7 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
         style = Paint.Style.FILL
     }
     private val vertexRadius = 24f
+    private var customDraw = false
 
     init {
         // This call is necessary in order to override onDraw
@@ -45,14 +45,21 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
 
 
     override fun onDraw(canvas: Canvas?) {
+        if ( !customDraw ) {
+            super.onDraw(canvas)
+            return
+        }
+
+        canvas?.drawBitmap( currentImage , 0f , 0f , null )
+
         // Draw the boundaries of the quadrilateral
         // Refer to this SO thread -> https://stackoverflow.com/questions/2047573/how-to-draw-filled-polygon
         val path = currentQuadPath.apply {
             reset()
-            moveTo(currentQuad.p1.x, currentQuad.p1.y)
-            lineTo(currentQuad.p2.x, currentQuad.p2.y)
-            lineTo(currentQuad.p3.x, currentQuad.p3.y)
-            lineTo(currentQuad.p4.x, currentQuad.p4.y)
+            moveTo(currentQuad.x1, currentQuad.y1)
+            lineTo(currentQuad.x1, currentQuad.y2)
+            lineTo(currentQuad.x2, currentQuad.y2)
+            lineTo(currentQuad.x2, currentQuad.y1)
             close()
         }
         canvas?.drawPath( path , quadPaint )
@@ -61,12 +68,18 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
         for ( point in currentQuad.points() ) {
             canvas?.drawCircle( point.x, point.y , vertexRadius , vertexPaint )
         }
+        customDraw = false
 
     }
 
-    fun drawQuad( quad : Quadrilateral ) {
+    fun drawQuad( quad : BoundingBox ) {
+        customDraw = true
         currentQuad = quad
         invalidate()
+    }
+
+    fun setImage( image : Bitmap ) {
+        currentImage = image
     }
 
 }
