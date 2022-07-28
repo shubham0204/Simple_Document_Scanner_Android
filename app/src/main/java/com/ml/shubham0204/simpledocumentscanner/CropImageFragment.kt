@@ -25,8 +25,7 @@ class CropImageFragment : Fragment() {
     }
 
     fun drawImageWithBox( image : Bitmap , box : BoundingBox ) {
-        cropAreaDrawingOverlay.setImage( image )
-        cropAreaDrawingOverlay.drawQuad( box )
+        cropAreaDrawingOverlay.setInitialImageWithBox( image , box )
     }
 
 

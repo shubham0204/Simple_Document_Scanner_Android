@@ -5,30 +5,43 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.RectF
 
-class BoundingBox( var x : Int , var y : Int , var w : Int , var h : Int ) {
+class BoundingBox(
+    private var p1 : PointF ,
+    private var p2 : PointF ,
+    private var p3 : PointF ,
+    private var p4 : PointF ) {
 
-    var x1 = 0f
-    var x2 = 0f
-    var y1 = 0f
-    var y2 = 0f
+    var vertices = arrayOf( p1 , p2 , p3 , p4 )
 
-    init {
-        x1 = x.toFloat()
-        y1 = y.toFloat()
-        x2 = x1 + w
-        y2 = y1 + h
+    companion object {
+
+        fun createFromXYWH( x : Int  , y : Int , w : Int , h : Int ) : BoundingBox {
+            return BoundingBox(
+                PointF( x.toFloat() , y.toFloat() ) ,
+                PointF( x.toFloat() , (y+h).toFloat() ) ,
+                PointF( (x+w).toFloat() , (y+h).toFloat() ) ,
+                PointF( (x+w).toFloat() , y.toFloat() )
+            )
+        }
+
+        fun createFromRect( rect : RectF ) : BoundingBox {
+            return BoundingBox(
+                PointF(rect.left, rect.top ) ,
+                PointF( rect.left , rect.top + rect.height() ) ,
+                PointF( rect.left + rect.width() , rect.top + rect.height() ) ,
+                PointF( rect.left + rect.width() , rect.top )
+            )
+        }
+
     }
 
-    fun getRect() : RectF {
-        return RectF( x1 , y1 , x2 , y2 )
+    fun toRectF() : RectF {
+        return RectF( p1.x , p1.y , p3.x , p3.y )
     }
 
-    fun points() : Array<PointF> {
-        return arrayOf( PointF( x1 , y1 ) , PointF( x1 , y2 ) , PointF( x2 , y2 ) , PointF( x2 , y1 ) )
-    }
 
     override fun toString(): String {
-        return "$x $y $w $h"
+        return "str repr"
     }
 
 }

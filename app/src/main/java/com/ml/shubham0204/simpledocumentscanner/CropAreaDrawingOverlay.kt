@@ -3,44 +3,87 @@ package com.ml.shubham0204.simpledocumentscanner
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
-import android.view.SurfaceHolder
-import android.view.SurfaceView
 import android.view.View
 import com.ml.shubham0204.simpledocumentscanner.api.BoundingBox
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : View(context , attributeSet ) {
 
-    private lateinit var currentQuad : BoundingBox
+    private lateinit var currentBox : BoundingBox
     private lateinit var currentImage : Bitmap
-    private var currentQuadPath : Path = Path()
+    private lateinit var cropOverlayTransformations : CropOverlayTransformations
+    private var currentBoxPath : Path = Path()
     private val quadPaint = Paint().apply {
-        color = Color.BLACK
+        color = Color.CYAN
         style = Paint.Style.STROKE
-        strokeWidth = 8f
+        strokeWidth = 6f
     }
     private val vertexPaint = Paint().apply {
-        color = Color.BLACK
+        color = Color.BLUE
         style = Paint.Style.FILL
     }
-    private val vertexRadius = 24f
+    private val vertexRadius = 20f
+
     private var customDraw = false
+    private var moveQuadVertex = false
+    private var moveQuadVertexID = 0
+    private val selectVertexDistanceThreshold = 50
 
     init {
         // This call is necessary in order to override onDraw
         // See this SO thread -> https://stackoverflow.com/questions/12261435/canvas-does-not-draw-in-custom-view
         setWillNotDraw( false )
+        viewTreeObserver.addOnGlobalLayoutListener {
+            Log.e( "APP" , "View dims $width $height")
+            cropOverlayTransformations = CropOverlayTransformations( width , height )
+        }
     }
+
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when( event!!.action ) {
             MotionEvent.ACTION_DOWN -> {
-
+                Log.e( "APP" , "DOWN : ${event.x} ${event.y}")
+                val id = inferBoxVertex( event.x , event.y )
+                if ( id != null ) {
+                    moveQuadVertex = true
+                    moveQuadVertexID = id
+                }
             }
             MotionEvent.ACTION_UP -> {
+                Log.e( "APP" , "UP : ${event.x} ${event.y}")
+                moveQuadVertex = false
+                moveQuadVertexID = 0
+            }
+            MotionEvent.ACTION_MOVE -> {
+                Log.e( "APP" , "MOVE : ${event.x} ${event.y}")
+                if ( moveQuadVertex ) {
+                    Log.e( "APP" , "MOVING ...")
+                    currentBox.vertices[ moveQuadVertexID ] = PointF( event.x , event.y )
+                    refresh()
+                }
             }
         }
         return true
+    }
+
+    private fun inferBoxVertex(x : Float, y : Float ) : Int? {
+        var id = 0
+        for ( point in currentBox.vertices) {
+            val d = sqrt( ( point.x - x ).pow(2) + ( point.y - y ).pow(2) )
+            Log.e( "APP" , "DISTANCE $d")
+            if ( d < selectVertexDistanceThreshold ) {
+                return id
+            }
+            id += 1
+        }
+        return null
     }
 
 
@@ -50,36 +93,43 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
             return
         }
 
+        Log.e( "APP" , "DRAWING ...")
         canvas?.drawBitmap( currentImage , 0f , 0f , null )
 
         // Draw the boundaries of the quadrilateral
         // Refer to this SO thread -> https://stackoverflow.com/questions/2047573/how-to-draw-filled-polygon
-        val path = currentQuadPath.apply {
+        val path = currentBoxPath.apply {
             reset()
-            moveTo(currentQuad.x1, currentQuad.y1)
-            lineTo(currentQuad.x1, currentQuad.y2)
-            lineTo(currentQuad.x2, currentQuad.y2)
-            lineTo(currentQuad.x2, currentQuad.y1)
+            moveTo( currentBox.vertices[0].x , currentBox.vertices[0].y )
+            lineTo( currentBox.vertices[1].x , currentBox.vertices[1].y )
+            lineTo( currentBox.vertices[2].x , currentBox.vertices[2].y )
+            lineTo( currentBox.vertices[3].x , currentBox.vertices[3].y )
             close()
         }
         canvas?.drawPath( path , quadPaint )
 
         // Drawing small filled circle at the vertices of the quadrilateral
-        for ( point in currentQuad.points() ) {
+        for ( point in currentBox.vertices ) {
             canvas?.drawCircle( point.x, point.y , vertexRadius , vertexPaint )
         }
         customDraw = false
 
     }
 
-    fun drawQuad( quad : BoundingBox ) {
+    private fun refresh() {
         customDraw = true
-        currentQuad = quad
         invalidate()
     }
 
-    fun setImage( image : Bitmap ) {
-        currentImage = image
+    fun setInitialImageWithBox( image : Bitmap , box : BoundingBox ) {
+        CoroutineScope( Dispatchers.Default ).launch {
+            currentImage = cropOverlayTransformations.getBoundedImage( image )
+            currentBox = cropOverlayTransformations.getScaledBoundingBox( box )
+            CoroutineScope( Dispatchers.Main ).launch {
+                refresh()
+            }
+        }
     }
+
 
 }

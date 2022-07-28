@@ -65,7 +65,7 @@ class DocumentScanner( inferenceCallback: InferenceCallback ) {
             val y = output.getInt( 1 )
             val w = output.getInt( 2 )
             val h = output.getInt( 3 )
-            inferenceCallback.onInference( BoundingBox( x , y , w , h ))
+            inferenceCallback.onInference( BoundingBox.createFromXYWH( x , y , w , h ))
             tempImageFile.delete()
         }
 
