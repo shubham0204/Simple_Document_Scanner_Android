@@ -1,6 +1,6 @@
 from fastapi import FastAPI , File , UploadFile
 from fastapi.responses import Response
-from document import get_rect , get_binarized_img
+from document import get_rect , get_rect_2 , get_binarized_img
 import numpy as np
 import cv2
 
@@ -16,7 +16,7 @@ async def show_image( image : UploadFile = File() ):
     # Converting the `contents` bytes to an OpenCV Mat
     # Refer this SO answer -> https://stackoverflow.com/a/61345230/13546426
     img = cv2.imdecode( np.fromstring( contents, np.uint8 ), cv2.IMREAD_COLOR)
-    rect = get_rect( img )
+    rect = get_rect_2( img )
     return rect
 
 
