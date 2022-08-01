@@ -12,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+
     </style>
 
     <style name="AppButtonStyle" parent="Widget.Material3.Button">
@@ -22,6 +23,12 @@
         <item name="iconTint">@color/black</item>
         <item name="elevation">0dp</item>
         <item name="rippleColor">@color/color_button_ripple</item>
+    </style>
+
+    <style name="App.ToolbarStyle" parent="Widget.Material3.Toolbar">
+        <item name="textAllCaps">true</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

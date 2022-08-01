@@ -41,7 +41,7 @@ class BoundingBox(
 
 
     override fun toString(): String {
-        return "str repr"
+        return "${p1.x} ${p1.y} ${p3.x} ${p3.y}"
     }
 
 }

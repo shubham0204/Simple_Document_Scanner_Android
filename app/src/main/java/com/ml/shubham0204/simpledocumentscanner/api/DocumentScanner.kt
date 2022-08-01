@@ -1,6 +1,13 @@
 package com.ml.shubham0204.simpledocumentscanner.api
 
 import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.util.Log
+import com.ml.shubham0204.simpledocumentscanner.CropAreaDrawingOverlay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -19,24 +26,31 @@ class DocumentScanner( inferenceCallback: InferenceCallback ) {
     private val API_URL = "http://192.168.43.154:8080/get_rect"
     private val client = OkHttpClient()
     private lateinit var tempImageFile : File
+    private var scaleFactor = 1f
+    private var currentImage : Bitmap? = null
+    private val coroutineScope = CoroutineScope( Dispatchers.IO )
+
 
     interface InferenceCallback {
-        fun onInference( boundingBox: BoundingBox )
+        fun onInference( image : Bitmap , boundingBox: BoundingBox )
         fun onError( message : String )
     }
 
-    fun cropDocument( image : Bitmap ) {
+    fun cropDocument( image : Bitmap )  {
+        createAndSendRequest( image )
+    }
+
+    private fun createAndSendRequest(image : Bitmap ) {
         tempImageFile = File.createTempFile( "image" , "png" )
-        FileOutputStream( tempImageFile ).apply{
-            image.compress( Bitmap.CompressFormat.PNG , 100 , this )
-            close()
-        }
+        val outputStream = FileOutputStream( tempImageFile )
+        val resizedImage = processImage( image )
+        resizedImage.compress( Bitmap.CompressFormat.PNG , 100 , outputStream )
+        outputStream.close()
         sendRequest( tempImageFile )
     }
 
-
     // https://stackoverflow.com/questions/23512547/how-to-use-okhttp-to-upload-a-file
-    private fun sendRequest( imageFile : File ) {
+    private fun sendRequest(imageFile : File ) {
         val requestBody = MultipartBody.Builder().run{
             setType( MultipartBody.FORM )
             addFormDataPart(
@@ -50,6 +64,7 @@ class DocumentScanner( inferenceCallback: InferenceCallback ) {
             post( requestBody )
             build()
         }
+        Log.e( "APP" , "Request sent")
         client.newCall( request ).enqueue( responseCallback )
     }
 
@@ -61,14 +76,32 @@ class DocumentScanner( inferenceCallback: InferenceCallback ) {
 
         override fun onResponse(call: Call, response: Response) {
             val output = JSONArray( response.body!!.string() )
-            val x = output.getInt( 0 )
-            val y = output.getInt( 1 )
-            val w = output.getInt( 2 )
-            val h = output.getInt( 3 )
-            inferenceCallback.onInference( BoundingBox.createFromXYWH( x , y , w , h ))
+            val x = (output.getInt( 0 ) * scaleFactor).toInt()
+            val y = (output.getInt( 1 ) * scaleFactor).toInt()
+            val w = (output.getInt( 2 ) * scaleFactor).toInt()
+            val h = (output.getInt( 3 ) * scaleFactor).toInt()
             tempImageFile.delete()
+            CoroutineScope( Dispatchers.Main ).launch {
+                inferenceCallback.onInference( currentImage!! , BoundingBox.createFromXYWH( x , y , w , h ))
+            }
         }
 
+    }
+
+    private fun processImage(image : Bitmap ) : Bitmap {
+        val rotatedImage = if ( image.width > image.height ) { image.rotate( 90f ) } else { image }
+        currentImage = rotatedImage
+        val aspectRatio = rotatedImage.width.toFloat() / rotatedImage.height.toFloat()
+        val requiredWidth = ( aspectRatio * 480 ).toInt()
+        scaleFactor = rotatedImage.width.toFloat() / requiredWidth
+        return Bitmap.createScaledBitmap( rotatedImage , requiredWidth , 480 , false )
+    }
+
+    // Rotating a Bitmap
+    // SO -> https://stackoverflow.com/a/48715217/13546426
+    private fun Bitmap.rotate(degrees: Float): Bitmap {
+        val matrix = Matrix().apply{ postRotate(degrees) }
+        return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true )
     }
 
 
