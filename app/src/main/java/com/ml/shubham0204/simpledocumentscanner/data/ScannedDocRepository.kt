@@ -3,7 +3,6 @@ package com.ml.shubham0204.simpledocumentscanner.data
 import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class ScannedDocRepository( context: Context ) {
@@ -23,7 +22,7 @@ class ScannedDocRepository( context: Context ) {
         }
     }
 
-    fun getAllDocs() : Flow<List<ScannedDocument>> {
+    suspend fun getAllDocs() : List<ScannedDocument> {
         return scannedDocDatabase.getDAO().getAllDocuments()
     }
 

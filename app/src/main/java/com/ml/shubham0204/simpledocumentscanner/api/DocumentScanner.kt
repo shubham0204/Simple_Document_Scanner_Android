@@ -3,11 +3,9 @@ package com.ml.shubham0204.simpledocumentscanner.api
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.util.Log
-import com.ml.shubham0204.simpledocumentscanner.CropAreaDrawingOverlay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -28,7 +26,6 @@ class DocumentScanner( inferenceCallback: InferenceCallback ) {
     private lateinit var tempImageFile : File
     private var scaleFactor = 1f
     private var currentImage : Bitmap? = null
-    private val coroutineScope = CoroutineScope( Dispatchers.IO )
 
 
     interface InferenceCallback {

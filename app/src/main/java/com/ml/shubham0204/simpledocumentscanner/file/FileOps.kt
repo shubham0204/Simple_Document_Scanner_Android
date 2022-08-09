@@ -1,19 +1,26 @@
 package com.ml.shubham0204.simpledocumentscanner.file
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Environment
 import androidx.activity.result.ActivityResultLauncher
+import com.ml.shubham0204.simpledocumentscanner.R
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.*
 
 class FileOps {
 
     companion object {
 
-        fun getBitmapFromFileName( name : String ) : Bitmap {
-            val imageFile = getFileFromName( name )
+        private val dateFormat = SimpleDateFormat( "yyyy_MM_dd_HHmm" )
+
+        fun getBitmapFromFileName( context : Context , name : String ) : Bitmap {
+            val imageFile = getFileFromName( context , name )
             return getBitmapFromStream( FileInputStream( imageFile ) )
         }
 
@@ -23,8 +30,9 @@ class FileOps {
             return bitmap
         }
 
-        private fun getFileFromName( name : String ) : File? {
-            return null
+
+        private fun getFileFromName( context: Context , name : String ) : File {
+            return File( Environment.DIRECTORY_PICTURES + "/${context.getString(R.string.app_name)}/${name}")
         }
 
         fun saveFile( filename : String , launcher : ActivityResultLauncher<Intent?> ) {
@@ -34,6 +42,10 @@ class FileOps {
                 putExtra(Intent.EXTRA_TITLE, filename )
             }
             launcher.launch( createFileIntent )
+        }
+
+        fun getFilenameForCurrentTime() : String {
+            return dateFormat.format( Date() )
         }
 
 

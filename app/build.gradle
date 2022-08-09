@@ -45,6 +45,12 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-native-mt"
 
+    // Zoomage
+    // GitHub: http://jsibbold.github.io/zoomage/
+    implementation 'com.jsibbold:zoomage:1.3.1'
+
+    implementation("io.coil-kt:coil:2.1.0")
+
     implementation "androidx.room:room-runtime:2.4.3"
     annotationProcessor "androidx.room:room-compiler:2.4.3"
     implementation "androidx.room:room-ktx:2.4.3"

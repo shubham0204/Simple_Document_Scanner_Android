@@ -17,11 +17,15 @@ class CropOverlayTransformations(
 
     suspend fun getBoundedImage( image : Bitmap ) : Bitmap = withContext( Dispatchers.Main ) {
         boxTransformation = Matrix()
-        val scaleFactor = viewHeight.toFloat() / image.height.toFloat()
+       /* val scaleFactor = viewHeight.toFloat() / image.height.toFloat()
         val requiredWidth = ( image.width.toFloat() * scaleFactor ).toInt()
         boxTransformation.preScale( scaleFactor , scaleFactor )
-        boxTransformation.postTranslate( ( viewWidth / 2f ) - ( requiredWidth / 2f ) , 0f )
-        return@withContext Bitmap.createScaledBitmap( image , requiredWidth, viewHeight, false)
+        boxTransformation.postTranslate( ( viewWidth / 2f ) - ( requiredWidth / 2f ) , 0f )*/
+        val scaleFactor = viewWidth.toFloat() / image.width.toFloat()
+        val requiredHeight = ( image.height.toFloat() * scaleFactor ).toInt()
+        boxTransformation.preScale( scaleFactor , scaleFactor )
+        // boxTransformation.postTranslate( ( viewWidth / 2f ) - ( requiredWidth / 2f ) , 0f )
+        return@withContext Bitmap.createScaledBitmap( image , viewWidth , requiredHeight, false)
     }
 
 
