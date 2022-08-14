@@ -119,7 +119,7 @@ class CropImageActivity : AppCompatActivity() {
         val bitmap2 = Bitmap.createBitmap(2000, 2000, Bitmap.Config.ARGB_8888)
         val polyCanvas = Canvas(bitmap2)
 
-        var paint = Paint()
+        val paint = Paint()
         paint.strokeWidth = 9f
         val rect = bbox.toRectF()
         val path = Path().apply {
