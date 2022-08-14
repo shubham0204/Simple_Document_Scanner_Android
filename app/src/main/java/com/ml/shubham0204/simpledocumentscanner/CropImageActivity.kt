@@ -1,8 +1,7 @@
 package com.ml.shubham0204.simpledocumentscanner
 
 import android.content.ContentValues
-import android.graphics.Bitmap
-import android.graphics.Matrix
+import android.graphics.*
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +10,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
+import com.afollestad.materialdialogs.MaterialDialog
 import com.ml.shubham0204.simpledocumentscanner.api.BoundingBox
 import com.ml.shubham0204.simpledocumentscanner.api.DocumentScanner
 import com.ml.shubham0204.simpledocumentscanner.data.ScannedDocRepository
@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
 class CropImageActivity : AppCompatActivity() {
 
     private lateinit var documentScanner : DocumentScanner
@@ -30,7 +31,6 @@ class CropImageActivity : AppCompatActivity() {
 
     private lateinit var inputImage : Bitmap
     private lateinit var scaledImage : Bitmap
-    private lateinit var bboxOnInputImage : BoundingBox
     private lateinit var bboxOnScaledImage : BoundingBox
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,11 +81,79 @@ class CropImageActivity : AppCompatActivity() {
 
         val fileOutputStream = contentResolver.openOutputStream( fileUri!! )!!
         fileOutputStream.use{
-            scaledImage.compress( Bitmap.CompressFormat.PNG , 100 , it )
+            val croppedImage = cropImage2( inputImage , transformBBoxForInputImage( bboxOnScaledImage ) )
+            croppedImage.compress( Bitmap.CompressFormat.PNG , 100 , it )
             it.flush()
         }
         scannedDocRepository.addDoc( ScannedDocument( filename , fileUri.toString() , System.currentTimeMillis() ))
 
+        MaterialDialog( this ).show {
+            title( R.string.alert_dialog_title_crop_image_success )
+            message( R.string.message_crop_img_saved )
+            positiveButton( text = "Close" ){
+                finish()
+            }
+            cancelable( false )
+        }
+
+    }
+
+    // Crops image from the given bounding box ( RectF )
+    // Refer to this SO answer -> https://stackoverflow.com/a/62876721/13546426
+    private fun cropImage( image : Bitmap , bbox : BoundingBox ) : Bitmap {
+        val original = image.copy(Bitmap.Config.ARGB_8888, true)
+        val mask = createMask( image.width , image.height , bbox )
+        val result = Bitmap.createBitmap( mask.width, mask.height, Bitmap.Config.ARGB_8888 )
+        val mCanvas = Canvas(result)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
+        mCanvas.drawBitmap(original, 0f, 0f, null)
+        mCanvas.drawBitmap(mask, 0f, 0f, paint)
+        paint.xfermode = null
+        return result
+    }
+
+    private fun cropImage2( image : Bitmap , bbox : BoundingBox ) : Bitmap {
+        val mutableBitmap: Bitmap = image.copy(Bitmap.Config.ARGB_8888, true)
+
+        val bitmap2 = Bitmap.createBitmap(2000, 2000, Bitmap.Config.ARGB_8888)
+        val polyCanvas = Canvas(bitmap2)
+
+        var paint = Paint()
+        paint.strokeWidth = 9f
+        val rect = bbox.toRectF()
+        val path = Path().apply {
+            moveTo( rect.left , rect.top )
+            lineTo( rect.left , rect.top + rect.height() )
+            lineTo( rect.left + rect.width() , rect.top + rect.height() )
+            lineTo( rect.left + rect.width() , rect.top )
+            close()
+        }
+        polyCanvas.drawPath(path, paint)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
+        polyCanvas.drawBitmap(mutableBitmap, 0f, 0f, paint)
+
+        return bitmap2
+
+    }
+
+    private fun createMask( width : Int , height : Int , boundingBox: BoundingBox ) : Bitmap {
+        val mask = Bitmap.createBitmap( width , height , Bitmap.Config.RGB_565 )
+        val paint = Paint().apply {
+            style = Paint.Style.FILL
+            color = Color.WHITE
+        }
+        val rect = boundingBox.toRectF()
+        val path = Path().apply {
+            moveTo( rect.left , rect.top )
+            lineTo( rect.left , rect.top + rect.height() )
+            lineTo( rect.left + rect.width() , rect.top + rect.height() )
+            lineTo( rect.left + rect.width() , rect.top )
+            close()
+        }
+        val canvas = Canvas( mask )
+        canvas.drawPath( path , paint )
+        return mask
     }
 
 

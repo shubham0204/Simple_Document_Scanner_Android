@@ -2,18 +2,13 @@ package com.ml.shubham0204.simpledocumentscanner.data
 
 import android.app.Activity
 import android.content.Context
-import android.media.Image
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import coil.ImageLoader
 import coil.load
-import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
-import coil.transform.RoundedCornersTransformation
 import com.ml.shubham0204.simpledocumentscanner.R
 import java.text.SimpleDateFormat
 

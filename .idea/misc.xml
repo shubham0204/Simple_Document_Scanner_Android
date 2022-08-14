@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/drawable/ic_arrow_back_24.xml" value="0.229" />
         <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/drawable/ic_photo_camera_light_24.xml" value="0.229" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/drawable/ic_select_image_dark_24.xml" value="0.229" />
         <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/layout/activity_crop_image.xml" value="0.24895833333333334" />
         <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/layout/activity_main.xml" value="0.234375" />
         <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/layout/activity_view_image.xml" value="0.24895833333333334" />
