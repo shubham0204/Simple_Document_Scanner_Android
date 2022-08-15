@@ -3,6 +3,7 @@ package com.ml.shubham0204.simpledocumentscanner.api
 import android.graphics.PointF
 import android.graphics.RectF
 
+// BoundingBox class that holds the RectF for the predicted document
 class BoundingBox(
     private var p1 : PointF ,
     private var p2 : PointF ,
@@ -13,6 +14,7 @@ class BoundingBox(
 
     companion object {
 
+        // Creates a new BoundingBox instance from given x, y, width and height.
         fun createFromXYWH( x : Int  , y : Int , w : Int , h : Int ) : BoundingBox {
             return BoundingBox(
                 PointF( x.toFloat() , y.toFloat() ) ,

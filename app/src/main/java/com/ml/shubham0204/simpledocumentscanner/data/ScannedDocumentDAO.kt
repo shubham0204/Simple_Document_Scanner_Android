@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 
+// DAO ( Data Access Object ) for the `ScannedDocument`
 @Dao
 interface ScannedDocumentDAO {
 

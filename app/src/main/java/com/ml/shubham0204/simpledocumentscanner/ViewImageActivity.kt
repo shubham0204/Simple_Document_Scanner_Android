@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import com.ml.shubham0204.simpledocumentscanner.databinding.ActivityViewImageBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ViewImageActivity : AppCompatActivity() {
 
@@ -24,8 +27,12 @@ class ViewImageActivity : AppCompatActivity() {
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ) {
             // Use the ImageDecoder class as `MediaStore.Images.Media.getBitmap` was deprecated
             val source = ImageDecoder.createSource( contentResolver , imageUri )
-            val image = ImageDecoder.decodeBitmap( source )
-            viewImageBinding.viewDocImageview.setImageBitmap( image )
+            CoroutineScope( Dispatchers.Default ).launch {
+                val image = ImageDecoder.decodeBitmap( source )
+                CoroutineScope( Dispatchers.Main ).launch {
+                    viewImageBinding.viewDocImageview.setImageBitmap( image )
+                }
+            }
         }
         else {
             // On older devices, we use can use the `MediaStore.Images.Media.getBitmap` method

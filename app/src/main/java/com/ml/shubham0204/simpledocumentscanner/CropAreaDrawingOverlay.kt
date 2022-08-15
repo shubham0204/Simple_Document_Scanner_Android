@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+// Custom view to draw the crop selection box over the image
 class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : View(context , attributeSet ) {
 
     private var currentBox : BoundingBox? = null
