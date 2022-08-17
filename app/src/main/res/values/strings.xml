@@ -7,8 +7,11 @@
     <string name="alert_dialog_title_crop_image_success">Image saved</string>
 
     <string name="message_storage_permission_request">
-
+        The app requires the storage permission to access pictures on your device. The app could only
+        access those pictures that you've selected.
     </string>
+
+
     <string name="message_crop_img_saved">
         The cropped image has been saved on your device.
     </string>

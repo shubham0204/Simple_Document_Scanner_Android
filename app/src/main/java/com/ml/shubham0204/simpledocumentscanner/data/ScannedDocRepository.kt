@@ -1,6 +1,7 @@
 package com.ml.shubham0204.simpledocumentscanner.data
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,21 +12,21 @@ import kotlinx.coroutines.launch
 class ScannedDocRepository( context: Context ) {
 
     private val scannedDocDatabase = ScannedDocDatabase.getDatabase( context )
-    private val coroutineScope = CoroutineScope( Dispatchers.IO )
+    private val ioScope = CoroutineScope( Dispatchers.IO )
 
     fun addDoc( doc : ScannedDocument ) {
-        coroutineScope.launch {
+        ioScope.launch {
             scannedDocDatabase.getDAO().insertDocument( doc )
         }
     }
 
     fun removeDoc( doc : ScannedDocument ) {
-        coroutineScope.launch {
+        ioScope.launch {
             scannedDocDatabase.getDAO().deleteDocument( doc )
         }
     }
 
-    suspend fun getAllDocs() : List<ScannedDocument> {
+    fun getAllDocs() : LiveData<List<ScannedDocument>> {
         return scannedDocDatabase.getDAO().getAllDocuments()
     }
 

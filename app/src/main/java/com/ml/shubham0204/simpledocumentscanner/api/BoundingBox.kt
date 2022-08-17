@@ -36,7 +36,7 @@ class BoundingBox(
     }
 
     fun toRectF() : RectF {
-        return RectF( p1.x , p1.y , p3.x , p3.y )
+        return RectF( vertices[0].x , vertices[0].y , vertices[2].x , vertices[2].y )
     }
 
 

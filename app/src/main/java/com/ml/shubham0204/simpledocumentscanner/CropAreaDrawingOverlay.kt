@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.annotation.Nullable
 import com.ml.shubham0204.simpledocumentscanner.api.BoundingBox
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,17 +17,17 @@ import kotlin.math.sqrt
 // Custom view to draw the crop selection box over the image
 class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : View(context , attributeSet ) {
 
-    private var currentBox : BoundingBox? = null
+    var currentBox : BoundingBox? = null
     private lateinit var currentImage : Bitmap
     lateinit var cropOverlayTransformations : CropOverlayTransformations
     private var currentBoxPath : Path = Path()
     private val quadPaint = Paint().apply {
-        color = Color.CYAN
-        style = Paint.Style.STROKE
+        color = Color.parseColor( "#4D90caf9" )
+        style = Paint.Style.FILL
         strokeWidth = 6f
     }
     private val vertexPaint = Paint().apply {
-        color = Color.BLUE
+        color = Color.parseColor( "#fdd835" )
         style = Paint.Style.FILL
     }
     private val vertexRadius = 20f
@@ -92,7 +93,6 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
             super.onDraw(canvas)
             return
         }
-
         Log.e( "APP" , "DRAWING ...")
         canvas?.drawBitmap( currentImage ,
             ( width / 2f ) - ( currentImage.width / 2f ) ,
@@ -117,15 +117,22 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
                 canvas?.drawCircle( point.x, point.y , vertexRadius , vertexPaint )
             }
         }
-
         customDraw = false
-
     }
 
 
     private fun refresh() {
         customDraw = true
         invalidate()
+    }
+
+
+    fun getCurrentRectF() : RectF {
+        val inverse = Matrix()
+        cropOverlayTransformations.boxTransformation.invert( inverse )
+        val bbox = currentBox?.toRectF()!!
+        inverse.mapRect( bbox )
+        return bbox
     }
 
 

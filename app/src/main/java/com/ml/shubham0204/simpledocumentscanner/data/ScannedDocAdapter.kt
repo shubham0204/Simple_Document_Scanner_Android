@@ -45,6 +45,8 @@ class ScannedDocAdapter( private var context: Context , private var itemClickLis
     }
 
     fun addDocs( data : ArrayList<ScannedDocument> ) {
+        data.reverse()
+        scannedDocsList = ArrayList()
         scannedDocsList = data
         notifyDataSetChanged()
     }

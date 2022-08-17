@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.ml.shubham0204.simpledocumentscanner.databinding.ActivityViewImageBinding
 import kotlinx.coroutines.CoroutineScope
@@ -20,8 +21,12 @@ class ViewImageActivity : AppCompatActivity() {
         viewImageBinding = ActivityViewImageBinding.inflate( layoutInflater )
         setContentView( viewImageBinding.root )
 
+        setSupportActionBar( viewImageBinding.viewDocToolbar )
+
         // Get the Uri of the image from the incoming intent
         val imageUri = Uri.parse( intent.extras?.getString( "image_uri" )!! )
+        val imageName = intent.extras?.getString( "image_name" )
+        supportActionBar?.title = imageName
 
         // To read the Bitmap from the Uri, there's a different method for Android Q+ devices
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ) {

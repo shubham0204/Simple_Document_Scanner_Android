@@ -16,6 +16,7 @@
         <item name="fontFamily">@font/open_sans</item>
 
         <item name="md_color_button_text">@color/colorSecondaryVariant</item>
+        <item name="md_corner_radius">16dp</item>
 
     </style>
 

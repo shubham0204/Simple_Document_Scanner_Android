@@ -9,8 +9,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="color_button_ripple">@android:color/darker_gray</color>
 
-    <color name="colorPrimary">#e1f5fe</color>
-    <color name="colorPrimaryVariant">#afc2cb</color>
+    <color name="colorPrimary">#4dd0e1</color>
+    <color name="colorPrimaryVariant">#009faf</color>
 
     <color name="colorSecondary">#03a9f4</color>
     <color name="colorSecondaryVariant">#007ac1</color>

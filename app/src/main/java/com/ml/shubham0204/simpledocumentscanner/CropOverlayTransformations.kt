@@ -13,27 +13,22 @@ class CropOverlayTransformations(
     private var viewHeight : Int
 ) {
 
-    private lateinit var boxTransformation : Matrix
+    lateinit var boxTransformation : Matrix
 
-    suspend fun getBoundedImage( image : Bitmap ) : Bitmap = withContext( Dispatchers.Main ) {
+    fun getBoundedImage( image : Bitmap ) : Bitmap {
         boxTransformation = Matrix()
-       /* val scaleFactor = viewHeight.toFloat() / image.height.toFloat()
-        val requiredWidth = ( image.width.toFloat() * scaleFactor ).toInt()
-        boxTransformation.preScale( scaleFactor , scaleFactor )
-        boxTransformation.postTranslate( ( viewWidth / 2f ) - ( requiredWidth / 2f ) , 0f )*/
         val scaleFactor = viewWidth.toFloat() / image.width.toFloat()
         val requiredHeight = ( image.height.toFloat() * scaleFactor ).toInt()
         boxTransformation.preScale( scaleFactor , scaleFactor )
-        // boxTransformation.postTranslate( ( viewWidth / 2f ) - ( requiredWidth / 2f ) , 0f )
-        return@withContext Bitmap.createScaledBitmap( image , viewWidth , requiredHeight, false)
+        return Bitmap.createScaledBitmap( image , viewWidth , requiredHeight, false)
     }
 
 
-    suspend fun getScaledBoundingBox( boundingBox: BoundingBox ) : BoundingBox = withContext( Dispatchers.Main ) {
+    fun getScaledBoundingBox( boundingBox: BoundingBox ) : BoundingBox {
         val destRect = RectF()
         boxTransformation.mapRect( destRect , boundingBox.toRectF() )
         Log.e( "APP" , "TRANSFORMED RECT ${destRect.toShortString()}")
-        return@withContext BoundingBox.createFromRect( destRect )
+        return BoundingBox.createFromRect( destRect )
     }
 
 

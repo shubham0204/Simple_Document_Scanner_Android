@@ -1,14 +1,11 @@
 package com.ml.shubham0204.simpledocumentscanner
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
@@ -16,9 +13,7 @@ import com.ml.shubham0204.simpledocumentscanner.data.ScannedDocAdapter
 import com.ml.shubham0204.simpledocumentscanner.data.ScannedDocRepository
 import com.ml.shubham0204.simpledocumentscanner.data.ScannedDocument
 import com.ml.shubham0204.simpledocumentscanner.databinding.ContentMainBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.ml.shubham0204.simpledocumentscanner.utils.PermissionUtils
 
 
 // The first activity to open in the app
@@ -38,7 +33,12 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar( activityMainBinding.contentMainToolbar )
 
         activityMainBinding.fab.setOnClickListener {
-            dispatchSelectPictureIntent()
+            if ( PermissionUtils.hasStoragePermission( this ) ) {
+                dispatchSelectPictureIntent()
+            }
+            else {
+                PermissionUtils.requestStoragePermission( this , storagePermissionRequest )
+            }
         }
 
         val recyclerView = activityMainBinding.scannedDocsRecyclerview
@@ -46,11 +46,8 @@ class MainActivity : AppCompatActivity() {
         scannedDocRepository = ScannedDocRepository( this )
         scannedDocAdapter = ScannedDocAdapter( this , itemClickListener )
 
-        CoroutineScope( Dispatchers.IO ).launch {
-            val docs = scannedDocRepository.getAllDocs()
-            CoroutineScope( Dispatchers.Main ).launch {
-                scannedDocAdapter.addDocs( docs as ArrayList<ScannedDocument> )
-            }
+        scannedDocRepository.getAllDocs().observe( this@MainActivity ) {
+            scannedDocAdapter.addDocs( it as ArrayList<ScannedDocument> )
         }
         recyclerView.adapter = scannedDocAdapter
 
@@ -64,17 +61,16 @@ class MainActivity : AppCompatActivity() {
             startViewImageActivity( doc )
         }
 
+        @SuppressLint("CheckResult")
         override fun onItemLongClick(doc: ScannedDocument, position: Int) {
             MaterialDialog( this@MainActivity ).show{
-                listItems( R.array.long_press_menu_options ){ dialog, index, text ->
+                listItems( items = listOf( "🗑️ Delete" , "🌐 Share") ){ dialog, index, text ->
                     when( index ) {
                         0 -> {
                             scannedDocAdapter.removeDoc( doc )
                             scannedDocRepository.removeDoc( doc )
                         }
-                        1 -> {
-                            shareDoc( doc )
-                        }
+                        1 -> { shareDoc( doc ) }
                     }
                 }
             }
@@ -90,33 +86,18 @@ class MainActivity : AppCompatActivity() {
         startActivity( Intent.createChooser( shareIntent , "Share document via ..." ) )
     }
 
-    private fun hasStoragePermission() : Boolean {
-        return if ( Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ) {
-            ActivityCompat.checkSelfPermission( this , Manifest.permission.WRITE_EXTERNAL_STORAGE ) ==
-                    PackageManager.PERMISSION_GRANTED
+    private val storagePermissionRequest = registerForActivityResult( ActivityResultContracts.RequestPermission() ) { isGranted ->
+        if ( isGranted ) {
+            dispatchSelectPictureIntent()
         }
         else {
-            true
-        }
-    }
-
-    private fun requestStoragePermission() {
-        MaterialDialog( this ).show {
-            title( R.string.alert_dialog_title_storage_permission )
-            message( R.string.message_storage_permission_request )
-            positiveButton( text = "Allow" ){
-                storagePermissionRequest.launch( Manifest.permission.WRITE_EXTERNAL_STORAGE )
+            MaterialDialog( this@MainActivity ).show {
+                title( R.string.alert_dialog_title_storage_permission )
+                message( text = "The app could not function without the permission" )
+                positiveButton( text = "Close" ){
+                    it.dismiss()
+                }
             }
-            negativeButton( text = "Deny" ){
-
-            }
-            cornerRadius( res = R.dimen.material_dialog_corner_radius )
-        }
-    }
-
-    private val storagePermissionRequest = registerForActivityResult( ActivityResultContracts.RequestPermission() ) {
-        if ( it ) {
-            dispatchSelectPictureIntent()
         }
     }
 
@@ -135,7 +116,7 @@ class MainActivity : AppCompatActivity() {
 
     private val selectPictureIntentLauncher =
         registerForActivityResult( ActivityResultContracts.StartActivityForResult() ) { result ->
-            if ( result.data!!.data != null ) {
+            if ( result.data != null ) {
                 startCropImageActivity( result.data!!.data!! )
             }
         }
@@ -151,6 +132,7 @@ class MainActivity : AppCompatActivity() {
     private fun startViewImageActivity( doc : ScannedDocument ) {
         Intent( this , ViewImageActivity::class.java ).apply {
             putExtra( "image_uri" , doc.uri )
+            putExtra( "image_name" , doc.name )
             startActivity( this )
         }
     }
