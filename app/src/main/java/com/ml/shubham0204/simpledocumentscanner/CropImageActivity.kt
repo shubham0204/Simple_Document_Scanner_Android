@@ -11,8 +11,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
-import com.ml.shubham0204.simpledocumentscanner.api.BoundingBox
-import com.ml.shubham0204.simpledocumentscanner.api.DocumentScanner
+import com.ml.shubham0204.simpledocumentscanner.opencv.BoundingBox
+import com.ml.shubham0204.simpledocumentscanner.opencv.DocumentScanner
 import com.ml.shubham0204.simpledocumentscanner.data.ScannedDocRepository
 import com.ml.shubham0204.simpledocumentscanner.data.ScannedDocument
 import com.ml.shubham0204.simpledocumentscanner.databinding.ActivityCropImageBinding
@@ -107,7 +107,7 @@ class CropImageActivity : AppCompatActivity() {
 
     private fun binarizeImage( image : Bitmap ) {
         val croppedImage = BitmapUtils.cropImage( image , cropImageOverlay.getCurrentRectF() )
-        ioScope.launch{
+        defaultScope.launch{
             documentScanner.binarizeDocument( croppedImage )
         }
     }
@@ -132,7 +132,7 @@ class CropImageActivity : AppCompatActivity() {
 
     private val inferenceCallback = object : DocumentScanner.InferenceCallback {
 
-        override fun onCropDocumentInference(image: Bitmap, boundingBox: BoundingBox, isRotated : Boolean ) {
+        override fun onCropDocumentInference(image: Bitmap, boundingBox: BoundingBox ) {
             mainScope.launch{
                 Log.e( "APP" , "imagea size ${image.width} ${image.height}")
                 this@CropImageActivity.imageRotated = image
@@ -148,8 +148,8 @@ class CropImageActivity : AppCompatActivity() {
 
         override fun onError(message: String) {
             MaterialDialog( this@CropImageActivity ).show {
-                title( text = "Connection Error" )
-                message( text = "Could not connect with the server. Error $message" )
+                title( text = "Error" )
+                message( text = "We faced an error while cropping the document. Error $message" )
                 positiveButton( text = "Close" ){
                     it.dismiss()
                     finish()

@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import com.ml.shubham0204.simpledocumentscanner.api.BoundingBox
+import com.ml.shubham0204.simpledocumentscanner.opencv.BoundingBox
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.util.Log
-import com.ml.shubham0204.simpledocumentscanner.api.BoundingBox
+import com.ml.shubham0204.simpledocumentscanner.opencv.BoundingBox
 
 // Performs transformations on the image and box in CropAreaDrawingOverlay
 // Here's a nice blog to understand matrix transformations in Android ->

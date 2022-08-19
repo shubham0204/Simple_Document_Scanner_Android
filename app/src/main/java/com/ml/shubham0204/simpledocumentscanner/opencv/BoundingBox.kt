@@ -1,4 +1,4 @@
-package com.ml.shubham0204.simpledocumentscanner.api
+package com.ml.shubham0204.simpledocumentscanner.opencv
 
 import android.graphics.PointF
 import android.graphics.RectF
