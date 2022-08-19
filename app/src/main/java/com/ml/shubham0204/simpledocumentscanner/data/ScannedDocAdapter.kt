@@ -40,7 +40,6 @@ class ScannedDocAdapter( private var context: Context , private var itemClickLis
             crossfade( true )
             placeholder( R.drawable.ic_select_image_dark_24 )
             error( R.drawable.ic_image_not_exist_dark_24 )
-            transformations( listOf( RoundedCornersTransformation() ) )
         }
     }
 
