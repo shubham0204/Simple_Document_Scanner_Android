@@ -37,6 +37,10 @@ class CropImageActivity : AppCompatActivity() {
 
     private lateinit var progressDialog : MaterialDialog
 
+    // The three coroutine scopes used in this activity
+    // ioScope -> To perform file-related or networking tasks
+    // mainScope -> To update UI on main thread
+    // defaultScope -> To perform heavy tasks like bitmap transformation
     private val ioScope = CoroutineScope( Dispatchers.IO )
     private val mainScope = CoroutineScope( Dispatchers.Main )
     private val defaultScope = CoroutineScope( Dispatchers.Default )
@@ -51,6 +55,9 @@ class CropImageActivity : AppCompatActivity() {
         cropImageOverlay = cropImageActivityBinding.cropAreaDrawingOverlay
         documentScanner = DocumentScanner( inferenceCallback )
 
+        // The cropOverlayTransformations require the CropAreaDrawingOverlay's width and height to scale the
+        // image and bounding boxes.
+        // Refer this SO answer -> https://stackoverflow.com/a/24035591/13546426
         cropImageOverlay.viewTreeObserver.addOnGlobalLayoutListener( object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 cropImageOverlay.viewTreeObserver.removeOnGlobalLayoutListener( this )
@@ -69,6 +76,8 @@ class CropImageActivity : AppCompatActivity() {
 
         cropImageActivityBinding.toolbar.setOnMenuItemClickListener { menuItem ->
             if ( menuItem.itemId == R.id.crop_image_menu_save ) {
+                // Start the pipeline:
+                // Ask File Name to save -> binarize image -> Save file to storage -> Add file to ScannedDocRepository
                 askFileName()
             }
             true
@@ -106,9 +115,7 @@ class CropImageActivity : AppCompatActivity() {
     private fun saveFile( image : Bitmap ) {
         val filename = "$filename.png"
         val fileUri = FileOps.saveImage( this , image , filename )
-
         scannedDocRepository.addDoc( ScannedDocument( filename , fileUri.toString() , System.currentTimeMillis() ))
-
         mainScope.launch {
             progressDialog.dismiss()
             MaterialDialog( this@CropImageActivity ).show {
@@ -140,7 +147,14 @@ class CropImageActivity : AppCompatActivity() {
         }
 
         override fun onError(message: String) {
-            Log.e( "APP" , message )
+            MaterialDialog( this@CropImageActivity ).show {
+                title( text = "Connection Error" )
+                message( text = "Could not connect with the server. Error $message" )
+                positiveButton( text = "Close" ){
+                    it.dismiss()
+                    finish()
+                }
+            }
         }
 
     }
