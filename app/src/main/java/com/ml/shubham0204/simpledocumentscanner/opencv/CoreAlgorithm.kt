@@ -77,7 +77,8 @@ class CoreAlgorithm( private var openCVResultCallback: OpenCVResultCallback ) {
     }
 
     private fun morphClose( mat : Mat ) : Mat {
-        val kernel = Mat.ones( Size( 5.0 , 5.0 ) , CvType.CV_8U )
+        var kernel = Mat.ones( Size( 5.0 , 5.0 ) , CvType.CV_8U )
+        kernel = Imgproc.getStructuringElement( Imgproc.MORPH_RECT , Size( 5.0 , 5.0 ) )
         return Mat().apply {
             Imgproc.morphologyEx(
                 mat , this ,

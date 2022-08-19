@@ -106,8 +106,8 @@ class CropImageActivity : AppCompatActivity() {
     }
 
     private fun binarizeImage( image : Bitmap ) {
-        val croppedImage = BitmapUtils.cropImage( image , cropImageOverlay.getCurrentRectF() )
         defaultScope.launch{
+            val croppedImage = BitmapUtils.cropImage( image , cropImageOverlay.getCurrentRectF() )
             documentScanner.binarizeDocument( croppedImage )
         }
     }

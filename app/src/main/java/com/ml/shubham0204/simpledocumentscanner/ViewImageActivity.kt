@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ml.shubham0204.simpledocumentscanner.databinding.ActivityViewImageBinding
+import com.ml.shubham0204.simpledocumentscanner.utils.FileOps
 
 class ViewImageActivity : AppCompatActivity() {
 
@@ -21,8 +22,8 @@ class ViewImageActivity : AppCompatActivity() {
         val imageName = intent.extras?.getString( "image_name" )
         supportActionBar?.title = imageName
 
-        // To read the Bitmap from the Uri, there's a different method for Android Q+ devices
-
+        val image = FileOps.loadImageFromUri( this , imageUri )
+        viewImageBinding.viewDocImageview.setImageBitmap( image )
         viewImageBinding.viewDocToolbar.setNavigationOnClickListener{
             finish()
         }
