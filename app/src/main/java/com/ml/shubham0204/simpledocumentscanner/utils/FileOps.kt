@@ -4,21 +4,18 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import com.ml.shubham0204.simpledocumentscanner.R
 import java.io.InputStream
-import java.text.SimpleDateFormat
-import java.util.*
 
 // Helper methods for file handling operations
 class FileOps {
 
     companion object {
-
-        private val dateFormat = SimpleDateFormat( "yyyy_MM_dd_HHmm" )
 
         // Parse the `Bitmap` from `inputStream`
         fun getBitmapFromStream( inputStream: InputStream ) : Bitmap {
@@ -27,11 +24,7 @@ class FileOps {
             return bitmap
         }
 
-        fun getFilenameForCurrentTime() : String {
-            return dateFormat.format( Date() )
-        }
-
-
+        // Save the given Image to user's file storage
         fun saveImage( context: Context , image : Bitmap , filename : String ) : Uri {
             // Android Filesystem oh!
             // Refer to this blog -> https://www.simplifiedcoding.net/android-save-bitmap-to-gallery/
@@ -51,6 +44,18 @@ class FileOps {
                 it.flush()
             }
             return fileUri
+        }
+
+        // Load the Bitmap from given imageUri
+        fun loadImageFromUri( context: Context , imageUri : Uri ) : Bitmap {
+            return if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ) {
+                // Use the ImageDecoder class as `MediaStore.Images.Media.getBitmap` was deprecated
+                val source = ImageDecoder.createSource(context.contentResolver, imageUri)
+                ImageDecoder.decodeBitmap(source)
+            } else {
+                // On older devices, we use can use the `MediaStore.Images.Media.getBitmap` method
+                MediaStore.Images.Media.getBitmap( context.contentResolver, imageUri)
+            }
         }
 
 

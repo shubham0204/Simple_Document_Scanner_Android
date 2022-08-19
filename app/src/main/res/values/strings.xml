@@ -8,7 +8,7 @@
 
     <string name="message_storage_permission_request">
         The app requires the storage permission to access pictures on your device. The app could only
-        access those pictures that you've selected.
+        access those pictures that you have selected.
     </string>
 
 

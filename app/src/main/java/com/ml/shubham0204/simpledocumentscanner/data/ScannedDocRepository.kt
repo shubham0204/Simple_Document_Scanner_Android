@@ -8,10 +8,12 @@ import kotlinx.coroutines.launch
 
 // Data repository from where rest of the application interacts with the
 // database.
-// See ScannedDocument.kt -> ScannedDocumentDAO.kt -> ScannedDocDatabase
+// Follow the sequence ScannedDocument.kt -> ScannedDocumentDAO.kt -> ScannedDocDatabase
 class ScannedDocRepository( context: Context ) {
 
     private val scannedDocDatabase = ScannedDocDatabase.getDatabase( context )
+    // The repository makes use of the IO CoroutineScope that is specialized data input/output operations
+    // along with network requests.
     private val ioScope = CoroutineScope( Dispatchers.IO )
 
     fun addDoc( doc : ScannedDocument ) {

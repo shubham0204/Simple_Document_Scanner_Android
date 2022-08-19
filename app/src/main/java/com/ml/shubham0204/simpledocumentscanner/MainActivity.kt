@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar( activityMainBinding.contentMainToolbar )
 
         activityMainBinding.fab.setOnClickListener {
+            // Manage Permissions
             if ( PermissionUtils.hasStoragePermission( this ) ) {
                 dispatchSelectPictureIntent()
             }
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
 
         val recyclerView = activityMainBinding.scannedDocsRecyclerview
         recyclerView.layoutManager = LinearLayoutManager( this )
+
         scannedDocRepository = ScannedDocRepository( this )
         scannedDocAdapter = ScannedDocAdapter( this , itemClickListener )
 
@@ -52,8 +54,6 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = scannedDocAdapter
 
     }
-
-
 
     private val itemClickListener = object : ScannedDocAdapter.onItemClickListener {
 
@@ -102,7 +102,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     // Dispatch an `Intent` by which the user can select an image to detect a document.
     // Refer to these docs: https://developer.android.com/training/data-storage/shared/documents-files#open-file
     private fun dispatchSelectPictureIntent() {
@@ -113,7 +112,6 @@ class MainActivity : AppCompatActivity() {
         selectPictureIntentLauncher.launch( selectPictureIntent )
     }
 
-
     private val selectPictureIntentLauncher =
         registerForActivityResult( ActivityResultContracts.StartActivityForResult() ) { result ->
             if ( result.data != null ) {
@@ -121,7 +119,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
+    // Start CropActivity once an image is selected, and pass the Uri of the image
     private fun startCropImageActivity( imageUri : Uri ) {
         Intent( this , CropImageActivity::class.java ).apply {
             putExtra( "image_uri" , imageUri.toString() )
@@ -129,6 +127,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Start CropActivity once an scanned doc is selected, and pass the Uri of the image with its name
     private fun startViewImageActivity( doc : ScannedDocument ) {
         Intent( this , ViewImageActivity::class.java ).apply {
             putExtra( "image_uri" , doc.uri )

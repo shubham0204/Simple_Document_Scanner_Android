@@ -1,13 +1,9 @@
 package com.ml.shubham0204.simpledocumentscanner
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
-import android.graphics.*
+import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
@@ -58,7 +54,9 @@ class CropImageActivity : AppCompatActivity() {
         cropImageOverlay.viewTreeObserver.addOnGlobalLayoutListener( object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 cropImageOverlay.viewTreeObserver.removeOnGlobalLayoutListener( this )
-                cropImageOverlay.cropOverlayTransformations = CropOverlayTransformations( cropImageOverlay.width , cropImageOverlay.height )
+                cropImageOverlay.cropOverlayTransformations = CropOverlayTransformations(
+                    cropImageOverlay.width , cropImageOverlay.height
+                )
                 ioScope.launch{
                     val imageUri = Uri.parse( intent.extras?.getString( "image_uri" ) )
                     inputImage = FileOps.getBitmapFromStream( contentResolver.openInputStream( imageUri )!! )

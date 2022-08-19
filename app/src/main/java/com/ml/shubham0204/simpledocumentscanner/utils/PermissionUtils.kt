@@ -9,10 +9,15 @@ import androidx.core.app.ActivityCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.ml.shubham0204.simpledocumentscanner.R
 
+// Helper methods to request permissions
 class PermissionUtils {
 
     companion object {
 
+        // As we're only writing/reading images that were created by the app itself, we don't need
+        // the storage permission on devices > API 29
+        // On older devices, we'd need the WRITE_EXTERNAL_STORAGE permission
+        // See -> https://developer.android.com/training/data-storage/shared/media#storage-permission
         fun hasStoragePermission( context: Context ) : Boolean {
             return if ( Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ) {
                 ActivityCompat.checkSelfPermission( context , Manifest.permission.WRITE_EXTERNAL_STORAGE ) ==

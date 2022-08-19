@@ -6,9 +6,9 @@ import android.graphics.RectF
 // BoundingBox class that holds the RectF for the predicted document
 class BoundingBox(
     private var p1 : PointF ,
-    private var p2 : PointF ,
+    p2 : PointF ,
     private var p3 : PointF ,
-    private var p4 : PointF ) {
+    p4 : PointF ) {
 
     var vertices = arrayOf( p1 , p2 , p3 , p4 )
 
@@ -35,6 +35,7 @@ class BoundingBox(
 
     }
 
+    // With the current `vertices`, return a new RectF
     fun toRectF() : RectF {
         return RectF( vertices[0].x , vertices[0].y , vertices[2].x , vertices[2].y )
     }

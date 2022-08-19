@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import androidx.annotation.Nullable
 import com.ml.shubham0204.simpledocumentscanner.api.BoundingBox
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,10 +16,13 @@ import kotlin.math.sqrt
 // Custom view to draw the crop selection box over the image
 class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : View(context , attributeSet ) {
 
-    var currentBox : BoundingBox? = null
+    // These variables hold the current image on which the box is being drawn as
+    // well as the box ( along with its path )
+    private var currentBox : BoundingBox? = null
     private lateinit var currentImage : Bitmap
-    lateinit var cropOverlayTransformations : CropOverlayTransformations
     private var currentBoxPath : Path = Path()
+
+    // These variables determine the look of the box and its vertices
     private val quadPaint = Paint().apply {
         color = Color.parseColor( "#4D90caf9" )
         style = Paint.Style.FILL
@@ -31,7 +33,10 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
         style = Paint.Style.FILL
     }
     private val vertexRadius = 20f
+    lateinit var cropOverlayTransformations : CropOverlayTransformations
 
+    // These variables are used to store the position and id of the vertex that
+    // is being moved by the user
     private var customDraw = false
     private var moveQuadVertex = false
     private var moveQuadVertexID = 0
@@ -50,6 +55,8 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
         }
         when( event!!.action ) {
             MotionEvent.ACTION_DOWN -> {
+                // When the user presses the finger against the screen,
+                // we determine if any vertex has to be moved.
                 Log.e( "APP" , "DOWN : ${event.x} ${event.y}")
                 val id = inferBoxVertex( event.x , event.y )
                 if ( id != null ) {
@@ -74,6 +81,10 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
         return true
     }
 
+    // This method
+    // 1. Computes the distances of point ( given by x and y ) with the vertices of `currentBox`.
+    // 2. If the distance from the nearest vertex is smaller than a threshold ( selectVertexDistanceThreshold ),
+    //    return the ID of that vertex. Else, return null that indicates no vertex has to be moved
     private fun inferBoxVertex(x : Float, y : Float ) : Int? {
         var id = 0
         for ( point in currentBox!!.vertices) {
@@ -94,6 +105,8 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
             return
         }
         Log.e( "APP" , "DRAWING ...")
+
+        // Draw `currentImage` on the canvas
         canvas?.drawBitmap( currentImage ,
             ( width / 2f ) - ( currentImage.width / 2f ) ,
             0f ,
@@ -120,7 +133,7 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
         customDraw = false
     }
 
-
+    // Refresh the view to apply the changes
     private fun refresh() {
         customDraw = true
         invalidate()
@@ -135,7 +148,8 @@ class CropAreaDrawingOverlay(context: Context? , attributeSet: AttributeSet ) : 
         return bbox
     }
 
-
+    // Draw the image and box on the canvas.
+    // We need to scale the image and the box so that it can fit within the device's screen
     fun setImageAndBox(image : Bitmap, box : BoundingBox ) {
         CoroutineScope( Dispatchers.Default ).launch {
             currentImage = cropOverlayTransformations.getBoundedImage( image )

@@ -2,7 +2,6 @@ package com.ml.shubham0204.simpledocumentscanner.api
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.util.Log
 import com.ml.shubham0204.simpledocumentscanner.utils.BitmapUtils
 import kotlinx.coroutines.CoroutineScope

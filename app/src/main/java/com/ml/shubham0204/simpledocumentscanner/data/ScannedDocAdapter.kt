@@ -9,21 +9,24 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import coil.transform.RoundedCornersTransformation
 import com.ml.shubham0204.simpledocumentscanner.R
 import java.text.SimpleDateFormat
 
+// Adapter for RecyclerView that holds data for scanned documents.
+// See content_main.xml
 class ScannedDocAdapter( private var context: Context , private var itemClickListener : onItemClickListener )
     : RecyclerView.Adapter<ScannedDocAdapter.ScannedDocViewHolder>(){
 
+    // ArrayList to hold the ScannedDocument(s)
     var scannedDocsList = ArrayList<ScannedDocument>()
     private val dateToTextFormat = SimpleDateFormat( "yyyy MM dd HH:mm" )
 
-
+    // An interface to listen for onClick and onLongClick events on items of recyclerView
     interface onItemClickListener {
         fun onItemClick( doc : ScannedDocument , position: Int )
         fun onItemLongClick( doc : ScannedDocument , position: Int )
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScannedDocViewHolder {
         return ScannedDocViewHolder( ( context as Activity ).layoutInflater.inflate( R.layout.scanned_doc_item_layout , parent , false ))
@@ -37,6 +40,7 @@ class ScannedDocAdapter( private var context: Context , private var itemClickLis
             crossfade( true )
             placeholder( R.drawable.ic_select_image_dark_24 )
             error( R.drawable.ic_image_not_exist_dark_24 )
+            transformations( listOf( RoundedCornersTransformation() ) )
         }
     }
 
@@ -56,7 +60,6 @@ class ScannedDocAdapter( private var context: Context , private var itemClickLis
         scannedDocsList.removeAt( position )
         notifyItemRemoved( position )
     }
-
 
     inner class ScannedDocViewHolder( itemView : View) : RecyclerView.ViewHolder( itemView ) {
 
