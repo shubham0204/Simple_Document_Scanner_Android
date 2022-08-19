@@ -1,18 +1,17 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt' // This is important if you're using Room with Kotlin
 }
 
 android {
     compileSdk 32
-
     defaultConfig {
         applicationId "com.ml.shubham0204.simpledocumentscanner"
         minSdk 23
         targetSdk 32
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     viewBinding {
@@ -31,6 +30,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -39,6 +41,35 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation project( ":opencv_4_5_5" )
+
+    // OkHttp Client - To make network requests in Android
+    // GitHub: https://github.com/square/okhttp
+    implementation "com.squareup.okhttp3:okhttp:4.10.0"
+
+    // Async programming in Kotlin - Coroutines
+    // GitHub: https://github.com/Kotlin/kotlinx.coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2"
+
+    // Zoomage ( Zoomable ImageView used in activity_view_image.xml )
+    // GitHub: http://jsibbold.github.io/zoomage
+    implementation 'com.jsibbold:zoomage:1.3.1'
+
+    // Kotlin Coil ( used to load images efficiently in ScannedDocAdapter ) ( it resembles Picasso/Glide )
+    // GitHub: https://github.com/coil-kt/coil
+    implementation "io.coil-kt:coil:2.1.0"
+
+    // Material Dialogs ( used to show alert dialogs everywhere in the app )
+    // GitHub: https://github.com/afollestad/material-dialogs
+    implementation 'com.afollestad.material-dialogs:core:3.3.0'
+    implementation 'com.afollestad.material-dialogs:input:3.3.0'
+
+    // AndroidX Room - To implement SQLite database in Android apps
+    // Docs and releases: https://developer.android.com/jetpack/androidx/releases/room
+    implementation "androidx.room:room-runtime:2.4.3"
+    annotationProcessor "androidx.room:room-compiler:2.4.3"
+    implementation "androidx.room:room-ktx:2.4.3"
+    kapt("androidx.room:room-compiler:2.4.3")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

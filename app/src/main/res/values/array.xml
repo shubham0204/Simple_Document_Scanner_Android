@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="long_press_menu_options">
+        <item>Delete</item>
+        <item>Share</item>
+    </array>
+
+</resources>

@@ -2,4 +2,19 @@
     <string name="app_name">Simple Document Scanner</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="alert_dialog_title_storage_permission">Storage Permission</string>
+    <string name="alert_dialog_title_crop_image_success">Image saved</string>
+
+    <string name="message_storage_permission_request">
+        The app requires the storage permission to access pictures on your device. The app could only
+        access those pictures that you have selected.
+    </string>
+
+
+    <string name="message_crop_img_saved">
+        The cropped image has been saved on your device.
+    </string>
+
+
 </resources>

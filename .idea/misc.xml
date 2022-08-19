@@ -3,8 +3,23 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/drawable/ic_arrow_back_24.xml" value="0.229" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/drawable/ic_photo_camera_light_24.xml" value="0.229" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/drawable/ic_select_image_dark_24.xml" value="0.229" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/layout/activity_crop_image.xml" value="0.24895833333333334" />
         <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/layout/activity_main.xml" value="0.234375" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/layout/activity_view_image.xml" value="0.24895833333333334" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/layout/content_main.xml" value="0.24895833333333334" />
         <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/layout/fragment_crop_image.xml" value="0.24895833333333334" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/layout/nav_drawer_header.xml" value="0.24895833333333334" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/layout/progress_dialog_layout.xml" value="0.24895833333333334" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/layout/scanned_doc_item_layout.xml" value="0.24791666666666667" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/menu/crop_image_app_bar.xml" value="0.24791666666666667" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/menu/crop_image_nav_bar.xml" value="0.24791666666666667" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/menu/nav_drawer.xml" value="0.24895833333333334" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/menu/top_app_bar.xml" value="0.18671875" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/xml/file_paths.xml" value="0.24791666666666667" />
+        <entry key="..\:/AndroidStudioProjects/SimpleDocumentScanner/app/src/main/res/xml/network_security_config.xml" value="0.1" />
       </map>
     </option>
   </component>
