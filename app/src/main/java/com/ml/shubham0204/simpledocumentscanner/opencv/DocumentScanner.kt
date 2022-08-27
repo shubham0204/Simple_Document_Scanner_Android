@@ -6,14 +6,10 @@ import com.ml.shubham0204.simpledocumentscanner.utils.BitmapUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.*
-import org.opencv.core.Core
-import java.io.File
 
 
-
-// This class handles the API calls and their responses.
-class DocumentScanner( private var inferenceCallback: InferenceCallback) {
+// This class on-device document scanning
+class DocumentScanner( private var inferenceCallback: InferenceCallback ) {
 
     // These variables preserve the aspect ratio and input image respectively.
     private var scaleFactor = 1f

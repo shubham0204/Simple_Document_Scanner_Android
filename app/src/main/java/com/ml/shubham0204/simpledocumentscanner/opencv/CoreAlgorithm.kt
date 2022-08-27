@@ -3,8 +3,12 @@ package com.ml.shubham0204.simpledocumentscanner.opencv
 import android.graphics.Bitmap
 import android.graphics.Rect
 import org.opencv.android.Utils
-import org.opencv.core.*
+import org.opencv.core.Mat
+import org.opencv.core.MatOfPoint
+import org.opencv.core.MatOfPoint2f
+import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
+
 
 class CoreAlgorithm( private var openCVResultCallback: OpenCVResultCallback ) {
 
@@ -17,7 +21,7 @@ class CoreAlgorithm( private var openCVResultCallback: OpenCVResultCallback ) {
         var x = Mat()
         Utils.bitmapToMat(image, x)
         x = convertColor(x)
-        x = adaptiveThreshold(x)
+        x = adaptiveThreshold(x , 25 , 5.0 )
         x = morphClose(x)
         x = erode(x)
         x = cannyEdgeDetection( x )
@@ -27,16 +31,20 @@ class CoreAlgorithm( private var openCVResultCallback: OpenCVResultCallback ) {
 
     fun binarize( image : Bitmap ) {
         var x = Mat()
-        Utils.bitmapToMat(image, x)
-        x = convertColor( x )
-        x = threshold( x )
+        Utils.bitmapToMat( image , x )
+        x = convertColorBGR( x )
+        x = adaptiveThreshold( x , 35 , 10.0 )
         val output = Bitmap.createBitmap( image.width , image.height , Bitmap.Config.RGB_565 )
         Utils.matToBitmap( x , output )
         openCVResultCallback.onBinarizeDocResult( output )
     }
 
     private fun convertColor(mat: Mat): Mat {
-        return Mat().apply{ Imgproc.cvtColor( mat, this , Imgproc.COLOR_RGB2GRAY) }
+        return Mat().apply{ Imgproc.cvtColor( mat, this , Imgproc.COLOR_RGB2GRAY ) }
+    }
+
+    private fun convertColorBGR( mat : Mat ) : Mat {
+        return Mat().apply{ Imgproc.cvtColor( mat, this , Imgproc.COLOR_BGR2GRAY ) }
     }
 
     private fun gaussianBlur( mat : Mat ) : Mat {
@@ -47,27 +55,21 @@ class CoreAlgorithm( private var openCVResultCallback: OpenCVResultCallback ) {
         return Mat().apply{ Imgproc.Canny( mat , this , 75.0 , 200.0 ) }
     }
 
-    private fun adaptiveThreshold( mat : Mat ) : Mat {
+    private fun adaptiveThreshold( mat : Mat , blockSize : Int , c : Double ) : Mat {
         return Mat().apply {
             Imgproc.adaptiveThreshold(
                 mat , this ,
                 255.0 ,
                 Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C ,
                 Imgproc.THRESH_BINARY ,
-                25 ,
-                5.0
+                blockSize ,
+                c
             )
         }
     }
 
-    private fun threshold( mat : Mat ) : Mat {
-        return Mat().apply {
-            Imgproc.threshold( mat , this , 150.0 , 255.0 , Imgproc.THRESH_BINARY )
-        }
-    }
-
     private fun erode( mat : Mat ) : Mat {
-        val kernel = Mat.ones( Size( 11.0 , 11.0 ) , CvType.CV_8U )
+        val kernel = Imgproc.getStructuringElement( Imgproc.MORPH_RECT , Size( 11.0 , 11.0 ) )
         return Mat().apply {
             Imgproc.erode(
                 mat , this ,
@@ -77,8 +79,7 @@ class CoreAlgorithm( private var openCVResultCallback: OpenCVResultCallback ) {
     }
 
     private fun morphClose( mat : Mat ) : Mat {
-        var kernel = Mat.ones( Size( 5.0 , 5.0 ) , CvType.CV_8U )
-        kernel = Imgproc.getStructuringElement( Imgproc.MORPH_RECT , Size( 5.0 , 5.0 ) )
+        val kernel = Imgproc.getStructuringElement( Imgproc.MORPH_RECT , Size( 5.0 , 5.0 ) )
         return Mat().apply {
             Imgproc.morphologyEx(
                 mat , this ,

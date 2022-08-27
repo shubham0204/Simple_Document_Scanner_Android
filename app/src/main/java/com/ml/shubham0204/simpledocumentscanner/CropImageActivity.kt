@@ -11,11 +11,11 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
-import com.ml.shubham0204.simpledocumentscanner.opencv.BoundingBox
-import com.ml.shubham0204.simpledocumentscanner.opencv.DocumentScanner
 import com.ml.shubham0204.simpledocumentscanner.data.ScannedDocRepository
 import com.ml.shubham0204.simpledocumentscanner.data.ScannedDocument
 import com.ml.shubham0204.simpledocumentscanner.databinding.ActivityCropImageBinding
+import com.ml.shubham0204.simpledocumentscanner.opencv.BoundingBox
+import com.ml.shubham0204.simpledocumentscanner.opencv.DocumentScanner
 import com.ml.shubham0204.simpledocumentscanner.utils.BitmapUtils
 import com.ml.shubham0204.simpledocumentscanner.utils.FileOps
 import kotlinx.coroutines.CoroutineScope

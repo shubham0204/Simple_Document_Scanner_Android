@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import coil.transform.RoundedCornersTransformation
 import com.ml.shubham0204.simpledocumentscanner.R
 import java.text.SimpleDateFormat
 
