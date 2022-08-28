@@ -1,5 +1,6 @@
-import numpy as np
 import cv2
+import numpy as np
+
 
 # uvicorn main:app --host 192.168.43.154 --port 8080 --reload
 
@@ -10,44 +11,46 @@ import cv2
 #    in the input image )
 def get_rect( img ):
 
-    # Erosion of the image - Unwanted pixel noise is eliminated by eroding the image,
-    # thereby enhancing the document-background borders.
-    kernel = np.ones( (7, 7), np.uint8)
-    img = cv2.erode( img , kernel , iterations=1 )
-
     # Colorspace conversion - For our use-case, we don't require any color information as such ( this leads us to
     # first limitation though ). It is also necessary as we're performing contour detection in further steps.
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    #
-    img = cv2.GaussianBlur(img, (9, 9), 0)
-    img = cv2.Canny(img, 75, 200)
-    contours, _ = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    contour_perimeters = [cv2.arcLength(contour, True) for contour in contours]
-    doc_contour = contours[np.argmax(contour_perimeters)]
-    x, y, w, h = cv2.boundingRect(doc_contour)
-    return x, y, w, h
-
-def get_rect_2( img ):
-    # ---
     img = cv2.cvtColor( img , cv2.COLOR_BGR2GRAY)
-    img = cv2.adaptiveThreshold( img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 25, 5)
 
+    # Thresholding with Otsu's Algorithm: Maximizes inter-class variance. Basically, it best splits the image into
+    # foreground and background
+    _ , img = cv2.threshold( img , 0 , 255 , cv2.THRESH_BINARY + cv2.THRESH_OTSU )
+
+    # Performing morphological operations on the image: These operations work on the boundaries of the object (
+    # or its shape/morphology )
+    # First, we perform morphological closing to fill small holes produced after thresholding.
+    # The image is first dilated and then eroded to perform this operation.
     kernel = np.ones((5, 5), np.uint8)
     img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
 
+    # We perform additional erosion to remove finer details.
+    # By performing all these morphological operations, we wish to preserve only the overall structure of the
+    # document ( the rectangular structure of the document )
+    # Also, we eliminate all inner details present inside the document, like text/images written in the document
     kernel = np.ones((11, 11), np.uint8)
     img = cv2.erode(img, kernel, iterations=1)
 
+    # Image cleaning is done, we now perform Canny edge detection
     img = cv2.Canny(img, 75, 200)
+
+    # Find contours within the edges
     contours, _ = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Find the contour with the largest arc length
     contour_perimeters = [cv2.arcLength(contour, True) for contour in contours]
     doc_contour = contours[np.argmax(contour_perimeters)]
+
     assert doc_contour is not None
+
+    # Compute a rect with the largest contour
     x, y, w, h = cv2.boundingRect(doc_contour)
     return x , y , w , h
 
+# Binarize the image to give it a 'scanned' effect
 def get_binarized_img( img ):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    return cv2.threshold( img , 150 , 255 , cv2.THRESH_BINARY )[ 1 ]
+    return cv2.adaptiveThreshold( img , 255 ,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 35 , 10 )
 
