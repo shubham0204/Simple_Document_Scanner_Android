@@ -87,3 +87,6 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+README.md
+README.md.backup
