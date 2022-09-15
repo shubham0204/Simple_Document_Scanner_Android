@@ -33,7 +33,7 @@ jobs:
       with:
         draft: false
         prerelease: false
-        release_name: ${{ steps.version.outputs.version }}
+        release_name: Android App - API-based solutio
         tag_name: ${{ github.ref }}
         body_path: CHANGELOG.md
       env:
