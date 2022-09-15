@@ -33,7 +33,7 @@ jobs:
       with:
         draft: false
         prerelease: false
-        release_name: Android App - API-based solutio
+        release_name: Android App - API-based solution
         tag_name: ${{ github.ref }}
         body_path: CHANGELOG.md
       env:
