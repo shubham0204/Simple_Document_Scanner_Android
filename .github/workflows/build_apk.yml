@@ -34,7 +34,7 @@ jobs:
         draft: false
         prerelease: false
         release_name: Android App - API-based solution
-        tag_name: ${{ github.ref }}
+        tag_name: v1.0.0
         body_path: CHANGELOG.md
       env:
         GITHUB_TOKEN: ${{ github.token }}
