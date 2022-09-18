@@ -34,7 +34,7 @@ jobs:
         draft: false
         prerelease: false
         release_name: Android App - on-device solution
-        tag_name: v1.0.0
+        tag_name: v1.0.0-ondevice
         body_path: CHANGELOG.md
       env:
         GITHUB_TOKEN: ${{ github.token }}
